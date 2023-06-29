@@ -3,7 +3,7 @@ const colors = require('colors')
 const dotenv = require('dotenv')
 const morgan = require('morgan')
 const cors = require('cors')
-const connectDB = require('./config/connecDb')
+const connectDB = require('./config/connectDb')
 
 // config dotenv
 dotenv.config()
