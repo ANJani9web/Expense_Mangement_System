@@ -24,7 +24,12 @@ app.use(morgan('dev'))
 //     res.send('Hello World! from server')
 // }
 // )
+
+// routes for users
 app.use('/api/v1/users',require('./routes/userRoute'))
+
+// routes for transactions
+app.use('/api/v1/transactions',require('./routes/transactionRoutes'))
 
 
 
