@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout/Layout";
 import { Form, Input, Modal, Select, Table, message, DatePicker } from "antd";
+import { UnorderedListOutlined, AreaChartOutlined } from "@ant-design/icons";
 import FormItem from "antd/es/form/FormItem";
 import axios from "axios";
 import Spinner from "../components/Spinner";
 import moment from "moment";
+import Analytics from "../components/Analytics";
 const { RangePicker } = DatePicker;
 
 const HomePage = () => {
@@ -25,6 +27,9 @@ const HomePage = () => {
 
   // for type filter
   const [type, setType] = useState("all");
+
+  // for analytics
+  const [viewData, setviewData] = useState("table");
 
   // data table
   const columns = [
@@ -70,7 +75,7 @@ const HomePage = () => {
           userid: user._id,
           frequency,
           selectedDate,
-          type
+          type,
         });
         setLoading(false);
         console.log(res.data);
@@ -82,7 +87,7 @@ const HomePage = () => {
       }
     };
     getAllTransactions();
-  }, [frequency, selectedDate,type]);
+  }, [frequency, selectedDate, type]);
 
   // for form handling
   const handleSubmit = async (values) => {
@@ -153,11 +158,24 @@ const HomePage = () => {
             <Select.Option value="all">All</Select.Option>
             <Select.Option value="income">Income</Select.Option>
             <Select.Option value="expense">Expense</Select.Option>
-            
           </Select>
-
         </div>
 
+        {/* for analytics part */}
+        <div className="switch-icons">
+          <UnorderedListOutlined
+            className={`mx-2 ${
+              viewData === "table" ? "active-icon" : "inactive-icon"
+            }`}
+            onClick={() => setviewData("table")}
+          />
+          <AreaChartOutlined
+            className={`mx-2 ${
+              viewData === "analytics" ? "active-icon" : "inactive-icon"
+            }`}
+            onClick={() => setviewData("analytics")}
+          />
+        </div>
 
         <div>
           <button
@@ -169,8 +187,14 @@ const HomePage = () => {
         </div>
       </div>
 
+      {/* for table or analytics */}
       <div className="content">
-        <Table columns={columns} dataSource={alltransactions} />
+        {viewData === "table" ? (
+          <Table columns={columns} dataSource={alltransactions} />
+        ) : (
+          <Analytics alltransactions={alltransactions} />
+        )}
+        {/* // <Table columns={columns} dataSource={alltransactions} /> */}
       </div>
 
       {/* Modal */}
