@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout/Layout";
-import { Form, Input, Modal, Select, Table, message } from "antd";
+import { Form, Input, Modal, Select, Table, message, DatePicker } from "antd";
 import FormItem from "antd/es/form/FormItem";
 import axios from "axios";
 import Spinner from "../components/Spinner";
+import moment from "moment";
+const { RangePicker } = DatePicker;
 
 const HomePage = () => {
   // for modal
@@ -14,6 +16,15 @@ const HomePage = () => {
 
   // for transactions
   const [alltransactions, setAllTransactions] = useState([]);
+
+  // for frequency
+  const [frequency, setFrequency] = useState("7");
+
+  // custom date picker
+  const [selectedDate, setselectedDate] = useState([]);
+
+  // for type filter
+  const [type, setType] = useState("all");
 
   // data table
   const columns = [
@@ -41,34 +52,37 @@ const HomePage = () => {
       title: "Date",
       dataIndex: "date",
       key: "date",
-    },{
-      title:"Actions"
-    }
+      render: (text) => <span>{moment(text).format("YYYY-MM-DD")}</span>,
+    },
+    {
+      title: "Actions",
+    },
   ];
-
-
-  // get all transactions
-  const getAllTransactions = async () => {
-    try {
-      const user = JSON.parse(localStorage.getItem("user"));
-      setLoading(true);
-      const res = await axios.post("/transactions/get-transactions", {
-        userid: user._id,
-      });
-      setLoading(false);
-      console.log(res.data);
-      setAllTransactions(res.data);
-    } catch (error) {
-      console.log(error);
-      message.error("Something went wrong");
-      setLoading(false);
-    }
-  };
 
   // useEffect hook
   useEffect(() => {
+    // get all transactions
+    const getAllTransactions = async () => {
+      try {
+        const user = JSON.parse(localStorage.getItem("user"));
+        setLoading(true);
+        const res = await axios.post("/transactions/get-transactions", {
+          userid: user._id,
+          frequency,
+          selectedDate,
+          type
+        });
+        setLoading(false);
+        console.log(res.data);
+        setAllTransactions(res.data);
+      } catch (error) {
+        console.log(error);
+        message.error("Something went wrong");
+        setLoading(false);
+      }
+    };
     getAllTransactions();
-  }, []);
+  }, [frequency, selectedDate,type]);
 
   // for form handling
   const handleSubmit = async (values) => {
@@ -89,13 +103,62 @@ const HomePage = () => {
       console.log(error);
     }
   };
+
   return (
     <Layout>
       {loading && <Spinner />}
 
       {/* Filters */}
       <div className="filters">
-        <div>Range Filters</div>
+        {/* for range filters */}
+        <div>
+          <h6>Select Frequency</h6>
+          <Select
+            value={frequency}
+            onChange={(values) => {
+              setFrequency(values);
+              console.log(values);
+            }}
+          >
+            <Select.Option value="1">Last 1 Day</Select.Option>
+            <Select.Option value="7">Last 1 Week</Select.Option>
+            <Select.Option value="30">Last 1 Month</Select.Option>
+            <Select.Option value="365">Last 1 Year</Select.Option>
+            <Select.Option value="custom">Custom</Select.Option>
+          </Select>
+
+          {/* for custom date picker */}
+          {frequency === "custom" && (
+            <RangePicker
+              value={selectedDate}
+              onChange={(values) => {
+                setselectedDate(values);
+                console.log(values);
+              }}
+            />
+          )}
+        </div>
+
+        {/* for type filter */}
+
+        <div>
+          <h6>Select Type</h6>
+          <Select
+            value={type}
+            onChange={(values) => {
+              setType(values);
+              console.log(values);
+            }}
+          >
+            <Select.Option value="all">All</Select.Option>
+            <Select.Option value="income">Income</Select.Option>
+            <Select.Option value="expense">Expense</Select.Option>
+            
+          </Select>
+
+        </div>
+
+
         <div>
           <button
             className="btn btn-primary"
