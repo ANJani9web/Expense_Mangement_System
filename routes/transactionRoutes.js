@@ -11,7 +11,7 @@ const router = express.Router()
 router.post('/add-transaction',addTransaction)
 
 // get transactions
-router.get('/get-transactions',getAllTransaction)
+router.post('/get-transactions',getAllTransaction)
 
 
 // exporting route

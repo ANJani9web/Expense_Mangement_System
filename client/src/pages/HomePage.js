@@ -1,20 +1,99 @@
-import React,{useState} from 'react'
-import Layout from '../components/Layout/Layout'
-import {Form, Input, Modal, Select} from 'antd'
-import FormItem from 'antd/es/form/FormItem'
+import React, { useState, useEffect } from "react";
+import Layout from "../components/Layout/Layout";
+import { Form, Input, Modal, Select, Table, message } from "antd";
+import FormItem from "antd/es/form/FormItem";
+import axios from "axios";
+import Spinner from "../components/Spinner";
 
 const HomePage = () => {
-  
   // for modal
-  const[showModal,setShowModal]=useState(false)
+  const [showModal, setShowModal] = useState(false);
 
+  // loading
+  const [loading, setLoading] = useState(false);
+
+  // for transactions
+  const [alltransactions, setAllTransactions] = useState([]);
+
+  // data table
+  const columns = [
+    {
+      title: "Amount",
+      dataIndex: "amount",
+      key: "amount",
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Category",
+      dataIndex: "category",
+      key: "category",
+    },
+    {
+      title: "Reference",
+      dataIndex: "reference",
+      key: "reference",
+    },
+    {
+      title: "Date",
+      dataIndex: "date",
+      key: "date",
+    },{
+      title:"Actions"
+    }
+  ];
+
+
+  // get all transactions
+  const getAllTransactions = async () => {
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      setLoading(true);
+      const res = await axios.post("/transactions/get-transactions", {
+        userid: user._id,
+      });
+      setLoading(false);
+      console.log(res.data);
+      setAllTransactions(res.data);
+    } catch (error) {
+      console.log(error);
+      message.error("Something went wrong");
+      setLoading(false);
+    }
+  };
+
+  // useEffect hook
+  useEffect(() => {
+    getAllTransactions();
+  }, []);
 
   // for form handling
-  const handleSubmit = (values) =>{
-       console.log(values)
-  }
+  const handleSubmit = async (values) => {
+    console.log(values);
+    try {
+      const user = JSON.parse(localStorage.getItem("user"));
+      setLoading(true);
+      await axios.post("/transactions/add-transaction", {
+        ...values,
+        userid: user._id,
+      });
+      setLoading(false);
+      message.success("Transaction Added Successfully");
+      setShowModal(false);
+    } catch (error) {
+      setLoading(false);
+      message.error("Error while adding transaction");
+      console.log(error);
+    }
+  };
   return (
     <Layout>
+      {loading && <Spinner />}
+
+      {/* Filters */}
       <div className="filters">
         <div>Range Filters</div>
         <div>
@@ -25,6 +104,10 @@ const HomePage = () => {
             Add New
           </button>
         </div>
+      </div>
+
+      <div className="content">
+        <Table columns={columns} dataSource={alltransactions} />
       </div>
 
       {/* Modal */}
@@ -84,15 +167,15 @@ const HomePage = () => {
           </FormItem>
 
           {/* for submit button */}
-          <div className='d-flex justify-content-end'>
+          <div className="d-flex justify-content-end">
             <button className="btn btn-primary" type="submit">
               SAVE
-              </button>
+            </button>
           </div>
         </Form>
       </Modal>
     </Layout>
   );
-}
+};
 
-export default HomePage
+export default HomePage;
