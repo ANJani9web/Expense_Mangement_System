@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout/Layout";
 import { Form, Input, Modal, Select, Table, message, DatePicker } from "antd";
-import { UnorderedListOutlined, AreaChartOutlined } from "@ant-design/icons";
+import {
+  UnorderedListOutlined,
+  AreaChartOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import FormItem from "antd/es/form/FormItem";
 import axios from "axios";
 import Spinner from "../components/Spinner";
@@ -30,6 +35,9 @@ const HomePage = () => {
 
   // for analytics
   const [viewData, setviewData] = useState("table");
+
+  // for editable and deletable functioning
+  const [editable, setEditable] = useState(null);
 
   // data table
   const columns = [
@@ -61,6 +69,20 @@ const HomePage = () => {
     },
     {
       title: "Actions",
+      render: (text, record) => (
+        <div>
+          <EditOutlined
+            onClick={() => {
+              setEditable(record);
+              setShowModal(true);
+            }}
+          />
+          <DeleteOutlined
+            className="mx-2"
+            onClick={() => handleDelete(record)}
+          />
+        </div>
+      ),
     },
   ];
 
@@ -89,19 +111,45 @@ const HomePage = () => {
     getAllTransactions();
   }, [frequency, selectedDate, type]);
 
+  // delete handler
+  const handleDelete = async (record) => {
+    try {
+      setLoading(true);
+      await axios.post("/transactions/delete-transaction", {
+        transactionId: record._id,
+      });
+      setLoading(false);
+      message.success("Transaction Deleted Successfully");
+    } catch (error) {
+      console.log(error);
+      message.error("Something went wrong");
+      setLoading(false);
+    }
+  };
   // for form handling
   const handleSubmit = async (values) => {
     console.log(values);
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
-      await axios.post("/transactions/add-transaction", {
-        ...values,
-        userid: user._id,
-      });
+      if (editable) {
+        await axios.post("/transactions/edit-transaction", {
+          payload: {
+            ...values,
+            userid: user._id,
+          },
+          transactionId: editable._id,
+        });
+      } else {
+        await axios.post("/transactions/add-transaction", {
+          ...values,
+          userid: user._id,
+        });
+      }
       setLoading(false);
-      message.success("Transaction Added Successfully");
+      message.success("Transaction Updated Successfully");
       setShowModal(false);
+      setEditable(null);
     } catch (error) {
       setLoading(false);
       message.error("Error while adding transaction");
@@ -199,12 +247,16 @@ const HomePage = () => {
 
       {/* Modal */}
       <Modal
-        title="Add Transaction"
+        title={editable ? "Edit Transaction" : "Add Transaction"}
         open={showModal}
         onCancel={() => setShowModal(false)}
         footer={false}
       >
-        <Form Layout="vertical" onFinish={handleSubmit}>
+        <Form
+          Layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={editable}
+        >
           {/* for amount */}
           <FormItem label="Amount" name="amount" required>
             <Input type="number" />

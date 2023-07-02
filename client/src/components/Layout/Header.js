@@ -1,6 +1,8 @@
 import { message } from "antd";
 import React,{useState,useEffect} from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { UserOutlined } from "@ant-design/icons";
+import "../../styles/HeaderStyles.css";
 
 const Header = () => {
   
@@ -22,7 +24,7 @@ const Header = () => {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar navbar-expand-lg bg-light">
         <div className="container-fluid">
           <button
             className="navbar-toggler"
@@ -38,7 +40,7 @@ const Header = () => {
 
           <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
             <Link className="navbar-brand" to="/">
-              Exchange Management System
+              Exchange Management Website
             </Link>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="nav-item">

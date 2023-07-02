@@ -9,13 +9,13 @@ const getAllTransaction = async (req, res) => {
   //     })
   // })
   try {
-    const { frequency,selectedDate, type} = req.body;
+    const { frequency, selectedDate, type } = req.body;
     const transactions = await transactionModel.find({
       //   date: {
       //     $gte: moment().subtract(Number(frequency), "d").toDate(),
       //   },
 
-      ...(frequency !== 'custom'
+      ...(frequency !== "custom"
         ? {
             date: {
               $gte: moment().subtract(Number(frequency), "d").toDate(),
@@ -31,7 +31,7 @@ const getAllTransaction = async (req, res) => {
           }),
 
       userid: req.body.userid,
-      ...(type!=='all' && {type})
+      ...(type !== "all" && { type }),
     });
     res.status(200).json(transactions);
   } catch (error) {
@@ -51,8 +51,37 @@ const addTransaction = async (req, res) => {
   }
 };
 
+// for editing the transactions controller
+const editTransaction = async (req, res) => {
+  try {
+    await transactionModel.findOneAndUpdate(
+      { _id: req.body.transactionId },
+      req.body.payload
+    );
+    res.status(200).send("Transaction Updated");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
+// for deleting the transaction for deletion
+const deleteTransaction = async (req, res) => {
+  try {
+    await transactionModel.findOneAndDelete({
+      _id: req.body.transactionId,
+    });
+    res.status(200).send("Transaction Deleted");
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
+
 // exporting controllers
 module.exports = {
   getAllTransaction,
   addTransaction,
+  editTransaction,
+  deleteTransaction,
 };
