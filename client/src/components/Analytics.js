@@ -14,6 +14,8 @@ const Analytics = ({ alltransactions }) => {
     "tax",
   ];
 
+
+
   // calculations for pie chart
   // total transaction
   const totalTransaction = alltransactions.length;
@@ -54,7 +56,7 @@ const Analytics = ({ alltransactions }) => {
             <div className="card-header">
               Total Transactions : {totalTransaction}
             </div>
-            <div className="card-body">
+            <div className="card-body mt-2">
               <h5 className="text-success">
                 Income : {totalIncomeTransactions.length}
               </h5>
@@ -65,15 +67,23 @@ const Analytics = ({ alltransactions }) => {
                 <Progress
                   type="circle"
                   strokeColor={"green"}
-                  className="mx-2"
-                  percent={totalIncomePercent.toFixed(0)}
+                  className="mx-2 mt-2"
+                  percent={
+                    totalIncomeTransactions.length === 0
+                      ? 0
+                      : totalIncomePercent.toFixed(0)
+                  }
                 />
 
                 <Progress
                   type="circle"
                   strokeColor={"red"}
                   className="mx-2 mt-3"
-                  percent={totalExpensePercent.toFixed(0)}
+                  percent={
+                    totalIncomeTransactions.length === 0
+                      ? 0
+                      : totalExpensePercent.toFixed(0)
+                  }
                 />
               </div>
             </div>
@@ -83,31 +93,40 @@ const Analytics = ({ alltransactions }) => {
         <div className="col-md-3">
           <div className="card">
             <div className="card-header">Total TurnOver : {totalTurnover}</div>
-            <div className="card-body">
+            <div className="card-body mt-2">
               <h5 className="text-success">Income : {totalIncomeTurnover}</h5>
               <h5 className="text-danger">Expense : {totalExpenseTurnover}</h5>
               <div>
                 <Progress
                   type="circle"
                   strokeColor={"green"}
-                  className="mx-2"
-                  percent={totalIncomeTurnoverPercent.toFixed(0)}
+                  className="mx-2 mt-2"
+                  percent={
+                    totalExpenseTransactions.length===0
+                      ? 0
+                      : totalIncomeTurnoverPercent.toFixed(0)
+                  }
                 />
                 <Progress
                   type="circle"
                   strokeColor={"red"}
                   className="mx-2 mt-3"
-                  percent={totalExpenseTurnoverPercent.toFixed(0)}
+                  percent={
+                    totalExpenseTransactions.length===0
+                      ? 0
+                      : totalExpenseTurnoverPercent.toFixed(0)
+                  }
                 />
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* for categories */}
-      <div className="col md-3">
-        <div className="col-md-4">
+        {/* </div> */}
+
+        {/* for categories */}
+        {/* <div className="row m-3"> */}
+        <div className="col-md-3">
           <h6 className="bg-dark p-2 text-light">Categorywise Income</h6>
           {categories.map((category) => {
             const amount = alltransactions
@@ -161,6 +180,7 @@ const Analytics = ({ alltransactions }) => {
           })}
         </div>
       </div>
+
       <div className="row mt-3 analytics"></div>
     </>
   );

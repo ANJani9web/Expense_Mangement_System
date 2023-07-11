@@ -2,13 +2,14 @@ import React,{useState,useEffect} from 'react'
 import { Form, Input,message } from "antd";
 import { Link,useNavigate } from "react-router-dom";
 import axios from 'axios';
+import "../styles/Loginpage.css";
 import Spinner from '../components/Spinner';
 
 
 const Login = () => {
 
   const img =
-    "https://images.unsplash.com/photo-1593538312308-d4c29d8dc7f1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80";
+    "https://images.pexels.com/photos/6289064/pexels-photo-6289064.jpeg?auto=compress&cs=tinysrgb&w=600";
   
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -43,13 +44,13 @@ const Login = () => {
 
   return (
     <>
-      <div className="register-page">
+      <div className="login-page">
         {/* creating form for login page */}
 
         {/* checking for spinner */}
         {loading && <Spinner />}
         <div className="row container">
-          <h1>Expanse Managment System - MERN STACK</h1>
+          <h1 className='display-4'>Expsanse Managment System </h1>
           <div className="col-md-6">
             <img src={img} alt="login-img" width={"100%"} height="100%" />
           </div>
@@ -58,16 +59,16 @@ const Login = () => {
               <h1>Login Form</h1>
 
               <Form.Item label="Email" name="email">
-                <Input type="email" />
+                <Input type="email" required />
               </Form.Item>
-
               <Form.Item label="Password" name="password">
-                <Input type="password" />
+                <Input type="password" required />
               </Form.Item>
-
               <div className="d-flex justify-content-between">
-                <Link to="/register">Not a user ? Click here to Register</Link>
-                <button className="btn btn-primary">Login</button>
+                <Link to="/register">
+                  Not a user ? Click Here to regsiter !
+                </Link>
+                <button className="btn">Login</button>
               </div>
             </Form>
           </div>

@@ -5,7 +5,7 @@
 }
 
 .content{
-  height: 100vh;
+  height: 100%;
 }
 
 .register-page{
@@ -20,8 +20,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px 20px;
-  box-shadow: 0 0 3px grey;
+    padding: 15px 20px;
+    box-shadow: 0 0 3px gray;
+    margin-bottom: 10px;
 }
 
 /* transection page */
@@ -39,9 +40,13 @@
 }
 
 .active-icon {
-  color: black;
+  color: blue;
 }
 
 .inactive-icon {
   color: gray;
+}
+
+.filter-tab .ant-select-selector {
+  width: 150px !important;
 }

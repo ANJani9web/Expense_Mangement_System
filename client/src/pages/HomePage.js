@@ -12,6 +12,8 @@ import axios from "axios";
 import Spinner from "../components/Spinner";
 import moment from "moment";
 import Analytics from "../components/Analytics";
+import "../styles/Homepage.css";
+
 const { RangePicker } = DatePicker;
 
 const HomePage = () => {
@@ -99,9 +101,10 @@ const HomePage = () => {
           selectedDate,
           type,
         });
+        setAllTransactions(res.data);
         setLoading(false);
         console.log(res.data);
-        setAllTransactions(res.data);
+        // setAllTransactions(res.data);
       } catch (error) {
         console.log(error);
         message.error("Something went wrong");
@@ -109,7 +112,7 @@ const HomePage = () => {
       }
     };
     getAllTransactions();
-  }, [frequency, selectedDate, type]);
+  }, [frequency, selectedDate, type,setAllTransactions]);
 
   // delete handler
   const handleDelete = async (record) => {
@@ -121,14 +124,15 @@ const HomePage = () => {
       setLoading(false);
       message.success("Transaction Deleted Successfully");
     } catch (error) {
+      setLoading(false);
       console.log(error);
       message.error("Something went wrong");
-      setLoading(false);
     }
   };
+
+
   // for form handling
   const handleSubmit = async (values) => {
-    console.log(values);
     try {
       const user = JSON.parse(localStorage.getItem("user"));
       setLoading(true);
@@ -138,22 +142,25 @@ const HomePage = () => {
             ...values,
             userid: user._id,
           },
-          transactionId: editable._id,
+          transacationId: editable._id,
         });
+        setLoading(false);
+        message.success("Transaction Updated Successfully");
+        //window.location.reload();
       } else {
         await axios.post("/transactions/add-transaction", {
           ...values,
           userid: user._id,
         });
+        setLoading(false);
+        message.success("Transaction Added Successfully");
       }
-      setLoading(false);
-      message.success("Transaction Updated Successfully");
       setShowModal(false);
       setEditable(null);
     } catch (error) {
       setLoading(false);
-      message.error("Error while adding transaction");
-      console.log(error);
+      console.log(error)
+      message.error("please fill all fields");
     }
   };
 
@@ -162,7 +169,7 @@ const HomePage = () => {
       {loading && <Spinner />}
 
       {/* Filters */}
-      <div className="filters">
+      <div className="filters top_filter">
         {/* for range filters */}
         <div>
           <h6>Select Frequency</h6>
@@ -194,7 +201,7 @@ const HomePage = () => {
 
         {/* for type filter */}
 
-        <div>
+        <div className="filter-tab">
           <h6>Select Type</h6>
           <Select
             value={type}
@@ -235,6 +242,7 @@ const HomePage = () => {
         </div>
       </div>
 
+
       {/* for table or analytics */}
       <div className="content">
         {viewData === "table" ? (
@@ -258,8 +266,8 @@ const HomePage = () => {
           initialValues={editable}
         >
           {/* for amount */}
-          <FormItem label="Amount" name="amount" required>
-            <Input type="number" />
+          <FormItem label="Amount" name="amount">
+            <Input type="number" required />
           </FormItem>
 
           {/* for type */}
@@ -292,22 +300,23 @@ const HomePage = () => {
 
           {/* for reference */}
           <FormItem label="Reference" name="reference">
-            <Input type="text" />
+            <Input type="text" required/>
           </FormItem>
 
           {/* for description */}
           <FormItem label="Description" name="description">
-            <Input type="text" />
+            <Input type="text" required/>
           </FormItem>
 
           {/* for date */}
-          <FormItem label="Date" name="date" required>
-            <Input type="date" />
+          <FormItem label="Date" name="date" >
+            <Input type="date" required/>
           </FormItem>
 
           {/* for submit button */}
           <div className="d-flex justify-content-end">
             <button className="btn btn-primary" type="submit">
+              {" "}
               SAVE
             </button>
           </div>

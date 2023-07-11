@@ -39,16 +39,19 @@ const Header = () => {
           </button>
 
           <div className="collapse navbar-collapse" id="navbarTogglerDemo01">
-            <Link className="navbar-brand" to="/">
-              Exchange Management Website
+            <Link className="navbar-brand mx-5" to="/">
+              Exchange Management System
             </Link>
             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
               <li className="nav-item">
                 {" "}
-                <p className="nav-link">{loginUser && loginUser.name}</p>{" "}
+                <h6 className="nav-link ">
+                  <UserOutlined /> <p>{loginUser && loginUser.name} </p>
+                  
+                </h6>{" "}
               </li>
               <li className="nav-item">
-                <button className="btn btn-primary" onClick={logoutHandler}>
+                <button className="btn btn-danger mx-4 my-3" onClick={logoutHandler}>
                   Logout
                 </button>
               </li>
